@@ -189,7 +189,8 @@ body {
 }
 
 /* ---- Controles ---- */
-.controls ul {
+.controls ul,
+ul.controls {
   list-style: none;
   display: flex;
   flex-direction: column;
@@ -226,7 +227,8 @@ kbd {
   border-radius: 4px;
 }
 
-.overlay.hidden {
+.hidden,
+ul.hidden {
   display: none;
 }
 
@@ -267,4 +269,39 @@ kbd {
 
 #restart-btn:hover {
   background: var(--btn-hover);
+}
+
+#pause-menu .overlay-box button {
+  margin-top: 0;
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  border: none;
+  border-radius: 6px;
+  padding: 10px 28px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: background 0.15s;
+  width: 100%;
+}
+
+#pause-menu .overlay-box button:hover {
+  background: var(--btn-hover);
+}
+
+#pause-title {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: 4px;
+  color: var(--overlay-score);
+}
+
+#start-level {
+  background: var(--kbd-bg);
+  color: var(--text);
+  border: 1px solid var(--kbd-border);
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 13px;
 }
