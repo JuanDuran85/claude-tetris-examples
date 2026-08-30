@@ -268,3 +268,79 @@ kbd {
 #restart-btn:hover {
   background: var(--btn-hover);
 }
+
+/* ---- High scores ---- */
+.highscore-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.highscore-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--control-text);
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.highscore-list li.highlight {
+  color: var(--value-color);
+  font-weight: 700;
+}
+
+.highscore-list .empty {
+  color: var(--control-text);
+}
+
+.link-btn {
+  background: none;
+  border: none;
+  color: var(--label-color);
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+  align-self: flex-start;
+}
+
+.link-btn:hover {
+  color: var(--value-color);
+}
+
+#highscore-entry {
+  display: flex;
+  gap: 6px;
+}
+
+#highscore-entry.hidden {
+  display: none;
+}
+
+#name-input {
+  width: 110px;
+  background: var(--kbd-bg);
+  border: 1px solid var(--kbd-border);
+  border-radius: 4px;
+  color: var(--text);
+  padding: 6px 8px;
+  font-size: 13px;
+}
+
+#submit-score-btn {
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+#submit-score-btn:hover {
+  background: var(--btn-hover);
+}
