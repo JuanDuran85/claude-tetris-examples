@@ -1,0 +1,63 @@
+name: Claude Issue Triage
+
+on:
+  issues:
+    types: [opened, edited]
+
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Create severity labels
+        run: |
+          gh label create "severity: critical" --color "d32f2f" --force || true
+          gh label create "severity: high" --color "f57c00" --force || true
+          gh label create "severity: medium" --color "fbc02d" --force || true
+          gh label create "severity: low" --color "388e3c" --force || true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Analyze issue with Claude
+        id: claude-triage
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            Analiza el siguiente issue del repositorio de Tetris y proporciona:
+
+            1. **Nivel de severidad:** Determina si es `critical`, `high`, `medium` o `low` basado en:
+               - critical: el juego no funciona en absoluto o hay pérdida de datos
+               - high: funcionalidad rota o comportamiento inesperado grave
+               - medium: problema que afecta la experiencia pero hay workaround
+               - low: mejora menor o problema cosmético
+
+            2. **Diagnóstico general:** En español, redacta un análisis que incluya:
+               - Resumen conciso del problema (2-3 líneas)
+               - Causa probable basada en la arquitectura (`CLAUDE.md`, `game.js`)
+               - Archivo(s) y función(es) del código probablemente involucrados
+               - Próximos pasos sugeridos para la solución
+
+            Acciones:
+            - Primero, ejecuta: `gh issue view ${{ github.event.issue.number }}` para leer el issue.
+            - Luego, asigna el nivel de severidad:
+              - Quita cualquier label `severity: *` existente: `gh issue edit ${{ github.event.issue.number }} --remove-label "severity: critical" --remove-label "severity: high" --remove-label "severity: medium" --remove-label "severity: low"` (algunos pueden fallar si no existen, eso está bien)
+              - Asigna el nuevo label: `gh issue edit ${{ github.event.issue.number }} --add-label "severity: {nivel}"`
+            - Finalmente, publica o actualiza el diagnóstico como comentario:
+              - Guarda el diagnóstico en un archivo temporal (ej. `/tmp/diagnosis.md`)
+              - Ejecuta: `gh issue comment ${{ github.event.issue.number }} --edit-last --body-file /tmp/diagnosis.md` para actualizar el comentario anterior si existe
+              - Si falla (primer comentario), crea uno nuevo: `gh issue comment ${{ github.event.issue.number }} --body-file /tmp/diagnosis.md`
+
+            El diagnóstico debe estar en **español** y ser útil para que el equipo implemente la solución después.
+          claude_args: '--allowedTools "Bash(gh issue view:*),Bash(gh issue edit:*),Bash(gh issue comment:*)"'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
